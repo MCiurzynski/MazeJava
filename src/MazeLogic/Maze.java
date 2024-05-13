@@ -14,7 +14,9 @@ public class Maze {
     private int col;
     private int start;
     private int end;
-    private char[] board;
+    private char [] board;
+    private int [] path;
+    private int pathLength;
 
     public void setRow(int r) {
         row = r;
@@ -58,6 +60,33 @@ public class Maze {
 
     public void makeBoard() {
         board = new char[row * col];
+        path = null;
+        pathLength = -1;
     }
 
+     public void setPath(int i, int c) {
+        path[i] = c;
+    }
+
+    public int getPath(int i) {
+        return path[i];
+    }
+    
+    public void initPath(int size) {
+        path = new int[size];
+        pathLength = size;
+    }
+    
+    public void setPathLength(int i) {
+        pathLength = i;
+    }
+    
+    public void clearPath() {
+        path = null;
+        pathLength = -1;
+    }
+
+    public int getPathLength() {
+        return pathLength;
+    }
 }

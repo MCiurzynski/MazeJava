@@ -4,10 +4,14 @@
  */
 package MazeGUI;
 
+import MazeLogic.FileNotCorrectException;
+import MazeLogic.Properties;
 import MazeLogic.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -50,6 +54,13 @@ public class MazeFrame extends JFrame {
 
         findPath = new JButton("findPath");
         findPath.setText("Znajdz ścieżke");
+        findPath.addActionListener((e) -> {
+            if (maze != null) {
+                var findPath = new FindPath(maze);
+                findPath.find();
+                resetMaze();
+            }
+        });
 
         buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -81,15 +92,20 @@ public class MazeFrame extends JFrame {
         mazePanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+
                 int cellX = e.getX() / Properties.getCellSize();
                 int cellY = e.getY() / Properties.getCellSize();
                 if (e.getButton() == 1) {
-                    if (maze.getBoard(cellX + cellY * maze.getCol()) != 'X')
+                    if (maze.getBoard(cellX + cellY * maze.getCol()) != 'X' && maze.getEnd() != cellX + cellY * maze.getCol()) {
                         maze.setStart(cellX + cellY * maze.getCol());
+                        maze.clearPath();
+                    }
                 }
                 if (e.getButton() == 3) {
-                    if (maze.getBoard(cellX + cellY * maze.getCol()) != 'X')
+                    if (maze.getBoard(cellX + cellY * maze.getCol()) != 'X' && maze.getStart() != cellX + cellY * maze.getCol()) {
                         maze.setEnd(cellX + cellY * maze.getCol());
+                        maze.clearPath();
+                    }
                 }
                 resetMaze();
             }
@@ -120,7 +136,7 @@ public class MazeFrame extends JFrame {
             fileChooser.setDialogTitle("Otwórz plik tekstowy");
             fileChooser.setFileFilter(new FileNameExtensionFilter("Pliki tekstowe [.txt]", "txt"));
             int chooserVal = fileChooser.showOpenDialog(null);
-            
+
             if (chooserVal == JFileChooser.APPROVE_OPTION) {
                 File mazeFile = fileChooser.getSelectedFile();
                 mazeReader = new MazeReader(mazeFile.getPath());
@@ -131,6 +147,17 @@ public class MazeFrame extends JFrame {
 
         readBinFile = new JMenuItem("readBinFile");
         readBinFile.setText("Wczytaj plik binarny");
+        readBinFile.addActionListener((e) -> {
+            fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Otwórz plik binarny");
+            fileChooser.setFileFilter(new FileNameExtensionFilter("Pliki binarne [.bin]", "bin"));
+            int chooserVal = fileChooser.showOpenDialog(null);
+            if (chooserVal == JFileChooser.APPROVE_OPTION) {
+                File mazeFile = fileChooser.getSelectedFile();
+                mazeReader = new BinaryMazeReader(mazeFile.getPath());
+                createScrollMaze();
+            }
+        });
         menu.add(readBinFile);
 
         menu.addSeparator();
@@ -152,6 +179,39 @@ public class MazeFrame extends JFrame {
 
         saveMaze = new JMenuItem("saveMaze");
         saveMaze.setText("Zapisz dane");
+        saveMaze.addActionListener((e) -> {
+            fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Zapisz dane");
+            fileChooser.setFileFilter(new FileNameExtensionFilter(".txt(*.txt)", "txt"));
+            int chooserVal = fileChooser.showSaveDialog(null);
+            if (chooserVal == JFileChooser.APPROVE_OPTION) {
+                File fileToSave = fileChooser.getSelectedFile();
+                if (!fileToSave .getPath().endsWith(".txt")) {
+                    fileToSave  = new File(fileToSave .getPath() + ".txt");
+                }
+                if (fileToSave.exists()) {
+                    int dialogResult = JOptionPane.showConfirmDialog(null, "Podany plik istnieje. Chcesz go nadpisać?");
+                    if (dialogResult == JOptionPane.NO_OPTION) {
+                        return;
+                    }
+                }
+                try (var file = new FileWriter(fileToSave)) {
+                    for (int i = 0; i < maze.getRow() * maze.getCol(); i++) {
+                        if (i == maze.getStart())
+                            file.write('P');
+                        else if (i == maze.getEnd())
+                            file.write('K');
+                        else
+                            file.write(maze.getBoard(i));
+                        if (i % maze.getCol() == maze.getCol() - 1)
+                            file.write('\n');
+                    }
+                }
+                catch(IOException ex) {
+                    JOptionPane.showMessageDialog(null, ex);
+                }
+            }
+        });
         saveMaze.setEnabled(false);
         menu.add(saveMaze);
 
