@@ -38,7 +38,13 @@ public class BinaryMazeReader extends MazeReader {
     }
 
     @Override
-    public void read(Maze m) {
+    public void read(Maze m) throws FileNotCorrectException{
+        try {
+            isFileCorrect();
+        } catch (FileNotCorrectException ex) {
+            System.out.println(ex);
+            throw ex;
+        }
         try (var fileByte = new FileInputStream(fileName)) {
             var file = new DataInputStream(fileByte);
             fileId = Integer.reverseBytes(file.readInt());
@@ -96,6 +102,49 @@ public class BinaryMazeReader extends MazeReader {
 
     @Override
     protected void isFileCorrect() throws FileNotCorrectException {
-
+        try (var fileByte = new FileInputStream(fileName)) {
+            var file = new DataInputStream(fileByte);
+            fileId = Integer.reverseBytes(file.readInt());
+            escape = file.readByte();
+            columns = Short.reverseBytes(file.readShort());
+            rows = Short.reverseBytes(file.readShort());
+            startX = Short.reverseBytes(file.readShort());
+            startY = Short.reverseBytes(file.readShort());
+            endX = Short.reverseBytes(file.readShort());
+            endY = Short.reverseBytes(file.readShort());
+            file.readInt();
+            file.readInt();
+            file.readInt();
+            counter = Integer.reverseBytes(file.readInt());
+            solutionOffset = Integer.reverseBytes(file.readInt());
+            separator = file.readByte();
+            wall = file.readByte();
+            if ((path = file.readByte()) == -1) //Sprawdzanie czy plik się nie skończył
+		throw new FileNotCorrectException("Brak labiryntu");
+            int sepcount = 0;
+            int symbols = 0;
+            byte [] bytes = file.readAllBytes();
+            for (int c : bytes) { //Liczenie słów kluczowych i symboli
+                if (c < 0)
+                    c += 256;
+		if (c == separator) {
+			tmp = 0;
+			sepcount++;
+		}
+		if (tmp == 2)
+			symbols += c + 1;
+		tmp++;
+	}
+	if (sepcount != counter) //Sprawdzanie zgodności ilości słów kluczowych i symboli z wartościami podanymi w pliku
+		throw new FileNotCorrectException("Niepoprawna ilość słów kluczowych");
+	if (symbols != columns * rows)
+		throw new FileNotCorrectException("Niepoprawna ilość słów kluczowych");
+        }
+        catch (FileNotFoundException ex) {
+            JOptionPane.showMessageDialog(null, "Nie znaleziono pliku");
+        }
+        catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, "Błąd odczytywania plików");
+        }
     }
 }

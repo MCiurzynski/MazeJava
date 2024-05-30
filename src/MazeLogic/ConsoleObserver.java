@@ -8,6 +8,7 @@ import MazeGUI.MazeFrame;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 /**
@@ -47,7 +48,7 @@ public class ConsoleObserver extends Thread {
                 for (MazeFrame mazeFrame : list) {
                     if (mazeFrame.loadMaze(line) == 0) {
                         mazeFrame.findPath();
-                        System.out.println("Znaleziono ścieżke");
+                        System.out.println("Znaleziono sciezke");
                     } else {
                         System.err.println("Wybrany plik jest niepoprawny");
                     }

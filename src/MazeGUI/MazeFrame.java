@@ -29,7 +29,6 @@ public class MazeFrame extends JFrame {
     private JMenuItem readTxtFile;
     private JMenuItem readBinFile;
     private JMenuItem saveMazeImage;
-    private JMenuItem compressMaze;
     private JMenuItem saveMaze;
     private JMenuItem settings;
     private JMenuItem help;
@@ -235,11 +234,6 @@ public class MazeFrame extends JFrame {
         saveMaze.setEnabled(false);
         menu.add(saveMaze);
 
-        compressMaze = new JMenuItem("compressMaze");
-        compressMaze.setText("Kompresuj dane");
-        compressMaze.setEnabled(false);
-        menu.add(compressMaze);
-
         menu.addSeparator();
 
         settings = new JMenuItem("settings");
@@ -261,7 +255,6 @@ public class MazeFrame extends JFrame {
 
     private void setMenuState(boolean b) {
         saveMazeImage.setEnabled(b);
-        compressMaze.setEnabled(b);
         saveMaze.setEnabled(b);
     }
 
