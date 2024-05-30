@@ -1,0 +1,73 @@
+@startuml
+annotation java.lang.Override
+class MazeLogic.BinaryMazeReader
+class MazeLogic.EmptyQueueException
+class MazeLogic.FileNotCorrectException
+class MazeLogic.FindPath
+class MazeLogic.JFrame
+class MazeLogic.JPanel
+class MazeLogic.Logger
+class MazeLogic.LoggerTest
+class MazeLogic.Maze
+class MazeLogic.MazeFrame
+class MazeLogic.MazePanel
+class MazeLogic.MazeReader
+class MazeLogic.Properties
+class MazeLogic.Queue
+class MazeLogic.SaveImage
+class MazeLogic.SettingsFrame
+class com.formdev.flatlaf.FlatDarkLaf
+class java.awt.Color
+class java.awt.Graphics2D
+class java.awt.image.BufferedImage
+class java.io.DataInputStream
+class java.io.File
+class java.io.FileInputStream
+class java.io.FileNotFoundException
+class java.io.FileWriter
+class java.io.IOException
+class java.lang.Exception
+class java.util.ArrayList
+class javax.imageio.ImageIO
+class javax.swing.JOptionPane
+class javax.swing.filechooser.FileNameExtensionFilter
+MazeLogic.BinaryMazeReader ..> java.lang.Override
+MazeLogic.BinaryMazeReader --|> MazeLogic.MazeReader
+MazeLogic.BinaryMazeReader ..> java.io.DataInputStream
+MazeLogic.BinaryMazeReader ..> java.io.FileInputStream
+MazeLogic.BinaryMazeReader ..> java.io.FileNotFoundException
+MazeLogic.BinaryMazeReader ..> java.io.IOException
+MazeLogic.BinaryMazeReader ..> javax.swing.JOptionPane
+MazeLogic.EmptyQueueException ..> java.lang.Override
+MazeLogic.EmptyQueueException --|> java.lang.Exception
+MazeLogic.FileNotCorrectException ..> java.lang.Override
+MazeLogic.FileNotCorrectException --|> java.lang.Exception
+MazeLogic.FindPath ..> java.util.ArrayList
+MazeLogic.Logger ..> javax.swing.JOptionPane
+MazeLogic.LoggerTest ..> java.lang.Override
+MazeLogic.MazeFrame ..> java.lang.Override
+MazeLogic.MazeFrame ..> MazeLogic.FileNotCorrectException
+MazeLogic.MazeFrame --|> MazeLogic.JFrame
+MazeLogic.MazeFrame ..> MazeLogic.Properties
+MazeLogic.MazeFrame ..> com.formdev.flatlaf.FlatDarkLaf
+MazeLogic.MazeFrame ..> java.io.File
+MazeLogic.MazeFrame ..> java.io.FileWriter
+MazeLogic.MazeFrame ..> java.io.IOException
+MazeLogic.MazeFrame ..> javax.swing.filechooser.FileNameExtensionFilter
+MazeLogic.MazePanel ..> java.lang.Override
+MazeLogic.MazePanel --|> MazeLogic.JPanel
+MazeLogic.MazePanel ..> MazeLogic.Maze
+MazeLogic.MazePanel ..> MazeLogic.Properties
+MazeLogic.MazeReader ..> javax.swing.JOptionPane
+MazeLogic.Properties ..> java.awt.Color
+MazeLogic.Queue ..> java.util.ArrayList
+MazeLogic.SaveImage ..> java.lang.Override
+MazeLogic.SaveImage ..> java.awt.Graphics2D
+MazeLogic.SaveImage ..> java.awt.image.BufferedImage
+MazeLogic.SaveImage ..> java.io.File
+MazeLogic.SaveImage ..> java.io.IOException
+MazeLogic.SaveImage ..> javax.imageio.ImageIO
+MazeLogic.SaveImage ..> javax.swing.JOptionPane
+MazeLogic.SettingsFrame --|> MazeLogic.JFrame
+MazeLogic.SettingsFrame ..> MazeLogic.Properties
+@enduml

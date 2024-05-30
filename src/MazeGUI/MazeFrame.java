@@ -7,8 +7,10 @@ package MazeGUI;
 import MazeLogic.FileNotCorrectException;
 import MazeLogic.Properties;
 import MazeLogic.*;
+import com.formdev.flatlaf.FlatDarkLaf;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.Console;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -32,7 +34,7 @@ public class MazeFrame extends JFrame {
     private JMenuItem settings;
     private JMenuItem help;
     private JScrollPane scrollMaze;
-    private JButton findPath;
+    private JButton findPathButton;
     private MazePanel mazePanel;
     private JPanel buttonPanel;
     private JFileChooser fileChooser;
@@ -45,32 +47,31 @@ public class MazeFrame extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(1000, 700);
         setMinimumSize(new Dimension(400, 400));
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        //setExtendedState(JFrame.MAXIMIZED_BOTH);
 
         maze = null;
         scrollMaze = null;
 
         setMenu();
 
-        findPath = new JButton("findPath");
-        findPath.setText("Znajdz ścieżke");
-        findPath.addActionListener((e) -> {
-            if (maze != null) {
-                var findPath = new FindPath(maze);
-                findPath.find();
-                resetMaze();
-            }
+        findPathButton = new JButton("findPath");
+        findPathButton.setText("Znajdz ścieżke");
+        findPathButton.setFocusable(false);
+        findPathButton.addActionListener((e) -> {
+            findPath();
         });
 
         buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        buttonPanel.add(findPath);
+        buttonPanel.add(findPathButton);
         add(buttonPanel, BorderLayout.NORTH);
 
         setVisible(true);
     }
 
-    private void createScrollMaze() {
+    private int createScrollMaze() {
+        if (mazeReader == null)
+            return 1;
         maze = new Maze();
         if (scrollMaze != null) {
             remove(scrollMaze);
@@ -82,8 +83,7 @@ public class MazeFrame extends JFrame {
         } catch (FileNotCorrectException ex) {
             setMenuState(false);
             maze = null;
-            JOptionPane.showMessageDialog(null, "Wybrany plik jest niepoprawny: " + ex);
-            return;
+            return 1;
         }
         mazePanel = new MazePanel(maze);
         scrollMaze = new JScrollPane(mazePanel);
@@ -114,6 +114,7 @@ public class MazeFrame extends JFrame {
         validate();
         repaint();
         setMenuState(true);
+        return 0;
     }
 
     public void resetMaze() {
@@ -126,6 +127,24 @@ public class MazeFrame extends JFrame {
         }
     }
 
+    public void findPath() {
+        if (maze != null) {
+            var findPath = new FindPath(maze);
+            findPath.find();
+            resetMaze();
+        }
+    }
+
+    public int loadMaze(String s) {
+        if (s.endsWith(".txt"))
+            mazeReader = new MazeReader(s);
+        else if (s.endsWith(".bin"))
+            mazeReader = new BinaryMazeReader(s);
+        else
+            mazeReader = null;
+        return createScrollMaze();
+    }
+    
     private void setMenu() {
         menuBar = new JMenuBar();
         menu = new JMenu("Menu");
@@ -139,8 +158,8 @@ public class MazeFrame extends JFrame {
 
             if (chooserVal == JFileChooser.APPROVE_OPTION) {
                 File mazeFile = fileChooser.getSelectedFile();
-                mazeReader = new MazeReader(mazeFile.getPath());
-                createScrollMaze();
+                if (loadMaze(mazeFile.getPath()) == 1)
+                    JOptionPane.showMessageDialog(null, "Wybrany plik jest niepoprawny");
             }
         });
         menu.add(readTxtFile);
@@ -154,8 +173,8 @@ public class MazeFrame extends JFrame {
             int chooserVal = fileChooser.showOpenDialog(null);
             if (chooserVal == JFileChooser.APPROVE_OPTION) {
                 File mazeFile = fileChooser.getSelectedFile();
-                mazeReader = new BinaryMazeReader(mazeFile.getPath());
-                createScrollMaze();
+                if (loadMaze(mazeFile.getPath()) == 1)
+                    JOptionPane.showMessageDialog(null, "Wybrany plik jest niepoprawny");
             }
         });
         menu.add(readBinFile);
@@ -186,8 +205,8 @@ public class MazeFrame extends JFrame {
             int chooserVal = fileChooser.showSaveDialog(null);
             if (chooserVal == JFileChooser.APPROVE_OPTION) {
                 File fileToSave = fileChooser.getSelectedFile();
-                if (!fileToSave .getPath().endsWith(".txt")) {
-                    fileToSave  = new File(fileToSave .getPath() + ".txt");
+                if (!fileToSave.getPath().endsWith(".txt")) {
+                    fileToSave = new File(fileToSave.getPath() + ".txt");
                 }
                 if (fileToSave.exists()) {
                     int dialogResult = JOptionPane.showConfirmDialog(null, "Podany plik istnieje. Chcesz go nadpisać?");
@@ -197,17 +216,18 @@ public class MazeFrame extends JFrame {
                 }
                 try (var file = new FileWriter(fileToSave)) {
                     for (int i = 0; i < maze.getRow() * maze.getCol(); i++) {
-                        if (i == maze.getStart())
+                        if (i == maze.getStart()) {
                             file.write('P');
-                        else if (i == maze.getEnd())
+                        } else if (i == maze.getEnd()) {
                             file.write('K');
-                        else
+                        } else {
                             file.write(maze.getBoard(i));
-                        if (i % maze.getCol() == maze.getCol() - 1)
+                        }
+                        if (i % maze.getCol() == maze.getCol() - 1) {
                             file.write('\n');
+                        }
                     }
-                }
-                catch(IOException ex) {
+                } catch (IOException ex) {
                     JOptionPane.showMessageDialog(null, ex);
                 }
             }
@@ -243,5 +263,16 @@ public class MazeFrame extends JFrame {
         saveMazeImage.setEnabled(b);
         compressMaze.setEnabled(b);
         saveMaze.setEnabled(b);
+    }
+
+    public static void main(String[] args) {
+
+
+        SwingUtilities.invokeLater(() -> {
+            FlatDarkLaf.setup();
+            MazeFrame mazeFrame1 = new MazeFrame();
+            (new ConsoleObserver(mazeFrame1)).start();
+        });
+        
     }
 }

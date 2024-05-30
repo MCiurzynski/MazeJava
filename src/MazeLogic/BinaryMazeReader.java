@@ -71,7 +71,6 @@ public class BinaryMazeReader extends MazeReader {
             int n = 0;
             byte [] bytes = new byte[counter * 3];
             fileByte.read(bytes);
-            System.out.println(bytes[2]);
             for (int i = 0; i < counter * 3; i+=3) {
                 value = bytes[i + 1];
                 if (value < 0)
