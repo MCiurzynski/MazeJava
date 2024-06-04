@@ -56,6 +56,7 @@ public class MazeFrame extends JFrame {
         findPathButton = new JButton("findPath");
         findPathButton.setText("Znajdz ścieżke");
         findPathButton.setFocusable(false);
+        findPathButton.setEnabled(false);
         findPathButton.addActionListener((e) -> {
             findPath();
         });
@@ -247,6 +248,13 @@ public class MazeFrame extends JFrame {
 
         help = new JMenuItem("help");
         help.setText("Pomoc");
+        help.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new Help();
+                
+            }
+        });
         menu.add(help);
 
         menuBar.add(menu);
@@ -256,6 +264,7 @@ public class MazeFrame extends JFrame {
     private void setMenuState(boolean b) {
         saveMazeImage.setEnabled(b);
         saveMaze.setEnabled(b);
+        findPathButton.setEnabled(b);
     }
 
     public static void main(String[] args) {
