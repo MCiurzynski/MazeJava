@@ -4,7 +4,6 @@
  */
 package MazeLogic;
 
-import MazeGUI.FileNotCorrectException;
 import java.io.*;
 import javax.swing.JOptionPane;
 
@@ -69,7 +68,7 @@ public class MazeReader {
         }
     }
 
-    private void isFileCorrect() throws FileNotCorrectException {
+    protected void isFileCorrect() throws FileNotCorrectException {
         String nextLine, line;
         int start = 0, end = 0, lineNumber = 0, col;
         File file = new File(fileName);

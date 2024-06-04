@@ -5,7 +5,6 @@
 package MazeLogic;
 
 import MazeGUI.MazePanel;
-import MazeGUI.Properties;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -19,7 +18,6 @@ import javax.swing.JOptionPane;
  */
 public class SaveImage {
     public static void saveImage(Maze m, File file) {
-        System.out.println(file.getPath());
         if (!file.getPath().endsWith(".png")) {
             file = new File(file.getPath() + ".png");
         }

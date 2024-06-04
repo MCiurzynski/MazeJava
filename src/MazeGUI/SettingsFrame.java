@@ -8,6 +8,7 @@ package MazeGUI;
  *
  * @author golde
  */
+import MazeLogic.Properties;
 import java.awt.*;
 import javax.swing.*;
 
@@ -141,7 +142,6 @@ public class SettingsFrame extends JFrame {
                 Properties.setEndColor(newEndColor);
             int cellSize;
             cellSize = (int) cellSizeSpinner.getValue();
-            System.out.println(cellSize);
             Properties.setCellSize(cellSize);
             mazeFrame.resetMaze();
             setVisible(false);

@@ -1,5 +1,6 @@
 package MazeGUI;
 
+import MazeLogic.Properties;
 import MazeLogic.Maze;
 import javax.swing.*;
 import java.awt.*;
@@ -15,7 +16,7 @@ public class MazePanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        int size = m.getCol() * m.getRow();
+        int size = m.getRow() * m.getCol();
         for (int i = 0; i < size; i++) {
             switch (m.getBoard(i)) {
                 case 'X':
@@ -24,15 +25,18 @@ public class MazePanel extends JPanel {
                 case ' ':
                     g.setColor(Properties.getRoomColor());
                     break;
-                case 'S':
-                    g.setColor(Properties.getPathColor());
-                    break;
             }
-            g.fillRect(i % m.getRow() * Properties.getCellSize(), i / m.getRow() * Properties.getCellSize(), Properties.getCellSize(), Properties.getCellSize());
+            g.fillRect(i % m.getCol() * Properties.getCellSize(), i / m.getCol() * Properties.getCellSize(), Properties.getCellSize(), Properties.getCellSize());
         }
         g.setColor(Properties.getStartColor());
-        g.fillRect(m.getStart() % m.getRow() * Properties.getCellSize(), m.getStart() / m.getRow() * Properties.getCellSize(), Properties.getCellSize(), Properties.getCellSize());
+        g.fillRect(m.getStart() % m.getCol() * Properties.getCellSize(), m.getStart() / m.getCol() * Properties.getCellSize(), Properties.getCellSize(), Properties.getCellSize());
         g.setColor(Properties.getEndColor());
-        g.fillRect(m.getEnd() % m.getRow() * Properties.getCellSize(), m.getEnd() / m.getRow() * Properties.getCellSize(), Properties.getCellSize(), Properties.getCellSize());
+        g.fillRect(m.getEnd() % m.getCol() * Properties.getCellSize(), m.getEnd() / m.getCol() * Properties.getCellSize(), Properties.getCellSize(), Properties.getCellSize());
+        if (m.getPathLength() != -1) {
+            for (int i = 0; i < m.getPathLength(); i++) {
+                g.setColor(Properties.getPathColor());
+                g.fillRect(m.getPath(i) % m.getCol() * Properties.getCellSize(), m.getPath(i) / m.getCol() * Properties.getCellSize(), Properties.getCellSize(), Properties.getCellSize());
+            }
+        }
     }
 }
